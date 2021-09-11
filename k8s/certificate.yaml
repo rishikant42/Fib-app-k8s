@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+
+kind: Certificate
+metadata:
+  name: letscode.co.in-tls
+spec:
+  secretName: letscode.co.in
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: letscode.co.in
+  dnsNames:
+    - letscode.co.in
+    - www.letscode.co.in
