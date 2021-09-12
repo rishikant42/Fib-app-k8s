@@ -1,68 +1,61 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## App architecture
 
-## Available Scripts
+<img src="./img/architecture.png">
 
-In the project directory, you can run:
+## App Setup
 
-### `npm start`
+- Create an account on travis-CI (https://travis-ci.org/)
+- Create an account google cloud(https://console.cloud.google.com/)
+- Create k8s cluster on GKE
+- Update `.travis.yml` variables accordingly
+- Add enviroment variables (DOCKER_USERNAME & DOCKER_PASSWORD) on travis-ci for this repo
+- Update docker image name in client, server and worker's Dockerfiles. Also, update `deploy.sh` scripts
+- Create GCP service-account credentials. Encrypt it with travis CLI & save it as `service-account.json.enc`
+- Create require secret object on k8s cluster
+    ```
+    $ kubectl create secret generic pgpassword --from-literal PGPASSWORD=<PSWD_VALUE>
+    ```
+- Install helm pkg manager:
+    ```
+    $ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    $ chmod 700 get_helm.sh
+    $ ./get_helm.sh
+    ```
+- Install Ingress-Nginx:
+    ```
+    $ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+    $ helm install my-release ingress-nginx/ingress-nginx
+    ```
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## HTTPS setup(SSL)
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+- Buy domain from domain service provider & configure DNS mapping
+- Update domain name in `k8s/issuer.issuer.yaml` and `k8s/certificate.yaml` files
+- Run following commands in k8s cluster
+    ```
+    # Install helm pkg manager:
+    $ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    $ chmod 700 get_helm.sh
+    $ ./get_helm.sh
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    # Create the namespace for cert-manager:
+    $ kubectl create namespace cert-manager
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    # Add the Jetstack Helm repository & update local cache
+    $ helm repo add jetstack https://charts.jetstack.io
+    $ helm repo update
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    # Install the cert-manager Helm chart:
+    $ helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.5.3 --create-namespace
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+    # Install the CRDs:
+    $ kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.2.0/cert-manager.crds.yaml
+    ```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## App screenshot
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+<img src="./img/app.png">
