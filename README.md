@@ -7,11 +7,14 @@
 - Create an account on travis-CI (https://travis-ci.org/)
 - Create an account google cloud(https://console.cloud.google.com/)
 - Create k8s cluster on GKE
-- Update `.travis.yml` variables accordingly.
-- Add enviroment variables (DOCKER_USERNAME & DOCKER_PASSWORD) on travis-ci for this repo.
-- Update docker image name in client, server and worker's Dockerfiles. Also, update `deploy.sh` scripts.
+- Update `.travis.yml` variables accordingly
+- Add enviroment variables (DOCKER_USERNAME & DOCKER_PASSWORD) on travis-ci for this repo
+- Update docker image name in client, server and worker's Dockerfiles. Also, update `deploy.sh` scripts
 - Create GCP service-account credentials. Encrypt it with travis CLI & save it as `service-account.json.enc`
-- Create require secret object on k8s cluster `$ kubectl create secret generic pgpassword --from-literal PGPASSWORD=<PSWD_VALUE>`
+- Create require secret object on k8s cluster
+    ```
+    $ kubectl create secret generic pgpassword --from-literal PGPASSWORD=<PSWD_VALUE>
+    ```
 - Install helm pkg manager:
     ```
     $ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
