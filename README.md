@@ -58,4 +58,4 @@
 
 ## App screenshot
 
-<img src="./img/image.png">
+<img src="./img/app.png">
