@@ -1,3 +1,3 @@
 ## App architecture
 
-[!architecture](./architecture.png)
+<img src="./architecture.png">
